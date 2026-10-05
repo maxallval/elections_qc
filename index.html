@@ -209,13 +209,13 @@ aside{padding:12px}
  aside{padding:8px 12px 24px;overflow:visible;border-left:0}
  .desk{display:none!important}
  #tools .tx{display:none}
- #tools .ic{margin-right:0}
  #tools{gap:6px}
  button{min-height:40px}
  #tools button{padding:6px 12px}
  #b-seats{display:none}
  #banner .bl{margin-bottom:4px}
- #banner .bl b{font-size:12px;padding:1px 8px}
+ #banner .bl b{font-size:13.7px;padding:1px 9px}
+ #banner .rs{width:14px;height:14px}
  #banner .br{grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}
  #banner .bbox{display:none}
  #banner .bblock{height:44px;padding:0 6px}
@@ -226,7 +226,13 @@ aside{padding:12px}
  #b-det{scroll-margin-top:110px}
  .blk:not(#b-search){margin-bottom:10px}
  .hh .cv{min-height:0}
+ #foot{order:3;padding:14px 12px 24px;background:var(--panel)}
+ #foot #tools{justify-content:center;flex-wrap:wrap}
+ #foot #tools .tx{display:inline}
+ #foot #tools .ic{margin-right:6px}
 }
+#foot:empty{display:none}
+#filters button[hidden]{display:none}
 </style></head><body>
 <header><div class="hl"><h1>Soirée électorale · Québec 2026</h1><span id="status">Chargement…</span></div>
 <div id="tools"><span id="upd" class="desk"></span><button id="rf" aria-label="Actualiser"><span class="ic">↻</span><span class="tx">Actualiser</span></button><button id="dm" class="desk">Mode démo</button><button id="tm" aria-label="Changer de thème">☾</button><button id="al"></button><button id="bn" class="desk">Bandeau seul ↗</button></div></header>
@@ -263,6 +269,7 @@ aside{padding:12px}
 <dialog id="hdlg"><div class="dh"><b id="hdt"></b><button id="hdx">Fermer</button></div><div id="hdb"></div></dialog>
 <dialog id="wdlg"><div class="dh"><b id="wdt"></b><button id="wdx">Fermer</button></div><input id="wdq" placeholder="Filtrer les circonscriptions…" aria-label="Filtrer"><div id="wdl"></div><div class="dh" style="margin:10px 0 0"><button id="wdr">Réinitialiser (par défaut)</button></div></dialog>
 <div id="banner"></div>
+<footer id="foot"></footer>
 <script>
 // ====== CONFIGURATION ======
 const BASE="https://donnees.electionsquebec.qc.ca";
@@ -853,6 +860,11 @@ document.querySelectorAll("aside .blk .hh").forEach(h=>{const c=document.createE
 [...CLOSED].forEach(id=>setBlk(id,true));
 document.querySelector("aside").addEventListener("click",e=>{const h=e.target.closest(".hh");if(!h||e.target.closest(".ib"))return;
   const b=h.closest(".blk");if(b)setBlk(b.id,!b.classList.contains("closed"))});
+// -- Mobile: actualiser, thème et alertes passent en bas de page
+const mqM=matchMedia("(max-width:800px)");
+function placeTools(){const t=$("tools"),f=$("foot"),h=document.querySelector("header");
+  if(mqM.matches){if(t.parentNode!==f)f.appendChild(t)}else if(t.parentNode!==h)h.appendChild(t)}
+mqM.addEventListener("change",placeTools);placeTools();
 // -- Aide (ⓘ): les textes longs s'affichent en superposition
 const ST={maj:64,total:127,known:0,n:127};
 const HELP={

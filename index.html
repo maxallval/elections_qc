@@ -83,8 +83,8 @@ aside h2:first-of-type{margin-top:14px}
 /* bandeau du bas */
 #banner{background:var(--panel);padding:8px 14px 10px}
 #banner .bl{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+#banner .rs{display:inline-block;width:12px;height:12px;background:#e02424}
 #banner .bl b{background:#fff;color:#0d1117;padding:3px 14px;font-size:17px;text-transform:uppercase;letter-spacing:.02em}
-#banner .bx{padding:2px 9px}
 #banner .br{display:grid;grid-template-columns:150px repeat(5,minmax(0,1fr));gap:8px;align-items:end}
 #banner .bbox{background:var(--card);padding:8px 10px;text-align:center;font-size:11px;font-weight:700;letter-spacing:.05em}
 #banner .bbox strong{display:block;font-size:26px;letter-spacing:0}
@@ -93,7 +93,6 @@ aside h2:first-of-type{margin-top:14px}
 #banner .bblock{background:var(--c);color:#fff;display:flex;align-items:center;padding:0 14px;height:62px;position:relative}
 #banner .bblock b{position:absolute;top:0;left:0;background:#0d1117;padding:1px 10px;font-size:15px}
 #banner .bblock em{font-style:normal;font-size:42px;font-weight:700;margin-left:auto}
-#banner.closed .br,#banner.closed .bl b{display:none}
 body.bandeau{display:block;height:auto;overflow:visible}
 body.bandeau>*:not(#banner){display:none!important}
 body.bandeau.transparent{background:transparent}
@@ -396,7 +395,7 @@ $("zi").onclick=()=>zoomAt(.6,...mid());$("zo").onclick=()=>zoomAt(1.6,...mid())
 // ====== RENDU ======
 let SIGK=null,paintQ=0;
 function resultsSig(){let h=0,n=0;for(const c in results){const r=results[c];n++;h=(Math.imul(h,31)+Math.round(r.pct*10))|0;for(const x of r.cands)h=(Math.imul(h,31)+x.v)|0}return n+":"+h}
-function uiSig(){return [view,[...SEL].join(),WACT,WGLOW,WDIM,WMOS,WCUSTOM&&WACT?JSON.stringify(WCUSTOM[WACT]):"",ALERT,SIDE,geoLoaded,Object.keys(paths).length,Object.keys(prev).length,prevTried,resTried].join("|")}
+function uiSig(){return [view,FEED,[...SEL].join(),WACT,WGLOW,WDIM,WMOS,WCUSTOM&&WACT?JSON.stringify(WCUSTOM[WACT]):"",ALERT,SIDE,geoLoaded,Object.keys(paths).length,Object.keys(prev).length,prevTried,resTried].join("|")}
 function paint(){ // regroupe les appels et ne redessine que si les données ou l'interface ont changé
   if(paintQ)return;
   paintQ=setTimeout(()=>{paintQ=0;const k=resultsSig()+"#"+uiSig();if(k===SIGK)return;SIGK=k;paintNow()},0);
@@ -497,8 +496,8 @@ async function loadResults(){
     if(DEMO)results=demo(final);
     else if(!h.res){results={};$("status").textContent=`Source ${view} non configurée (voir HIST dans le code, archives du DGEQ).`;paint();return}
     else results=adapt(await fetchJSON(view==="live"?[PROXY,h.res]:[h.res]),final);
-    $("status").textContent=(DEMO?"Mode démo · ":"")+(final?"Résultats "+view:"Mis à jour à "+new Date().toLocaleTimeString("fr-CA"));lastOk=new Date();$("status").dataset.s="ok";
-  }catch(e){results={};$("status").textContent="Résultats indisponibles ("+(e&&e.message||"erreur")+") — les fichiers ouvrent à 20 h. Nouvel essai en cours…";$("status").dataset.s="wait"}
+    $("status").textContent=(DEMO?"Mode démo · ":"")+(final?"Résultats "+view:"Mis à jour à "+new Date().toLocaleTimeString("fr-CA"));lastOk=new Date();$("status").dataset.s="ok";FEED=true;
+  }catch(e){results={};$("status").textContent="Résultats indisponibles ("+(e&&e.message||"erreur")+") — les fichiers ouvrent à 20 h. Nouvel essai en cours…";$("status").dataset.s="wait";FEED=false}
   if(view==="live"){resTried=true;mergeCands()}
   paint();
 }
@@ -523,7 +522,7 @@ document.querySelectorAll("#filters [data-t]").forEach(b=>{b.innerHTML=`${b.text
 $("fx").onclick=()=>{SEL.clear();syncFilters()};
 // ====== OPTIONS « SOIRÉE ÉLECTORALE » ======
 const BAN=new URLSearchParams(location.search).has("bandeau");
-let SIDE=false,paths2={},res2={},prev={},prevW={},prevG={},S22={},proj,SELC=null,lastOk=null,nextAt=Date.now()+REFRESH_MS;
+let FEED=null,SIDE=false,paths2={},res2={},prev={},prevW={},prevG={},S22={},proj,SELC=null,lastOk=null,nextAt=Date.now()+REFRESH_MS;
 const dotH=p=>`<span class="dot" style="background:${PARTIES[p]?.c||"#8a93a0"}"></span>`;
 const nk=s=>String(s||"").normalize("NFKD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z]/g,"");
 function bindHover(){}
@@ -595,12 +594,12 @@ document.querySelectorAll("#zones [data-z]").forEach(b=>b.onclick=()=>{zoneOn(b.
 function renderBanner(won,lead,TOTAL,MAJ,cnt){
   const el=$("banner");if(!el)return;
   const vs={};let tv=0;Object.values(results).forEach(r=>r.cands.forEach(c=>{vs[c.p]=(vs[c.p]||0)+c.v;tv+=c.v}));
-  const W=Object.values(won).reduce((a,b)=>a+b,0),closed=el.classList.contains("closed");
-  const label=view!=="live"?`Résultats ${view}`:!cnt?"En attente des résultats":W===TOTAL?"Résultats finaux":"En direct";
-  el.innerHTML=`<div class="bl"><button class="bx" id="bx" aria-label="${closed?"Afficher":"Fermer"} le bandeau">${closed?"▲":"✕"}</button><b>${label}</b></div>
+  const W=Object.values(won).reduce((a,b)=>a+b,0);
+  const label=view!=="live"?`Résultats ${view}`:(W===TOTAL&&TOTAL)?"Résultats finaux":FEED?(DEMO?"En live · démo":"En live"):"En attente des résultats";
+  const down=view==="live"&&FEED===false;
+  el.innerHTML=`<div class="bl"><b>${label}</b>${down?`<i class="rs" role="img" aria-label="Résultats indisponibles" title="Résultats indisponibles"></i>`:""}</div>
   <div class="br"><div class="bbox">CIRCONSCRIPTIONS<strong>${cnt}/${TOTAL}</strong><span>majorité ${MAJ}</span></div>${Object.entries(PARTIES).map(([k,p])=>`<div class="bcol" style="--c:${p.c}"><div class="bpct">${tv?((vs[k]||0)/tv*100).toFixed(1).replace(".",",")+" %":"—%"}</div><div class="bblock"><b>${k}</b><em>${won[k]+lead[k]}</em></div></div>`).join("")}</div>`;
 }
-$("banner").addEventListener("click",e=>{const b=e.target.closest("#bx");if(!b)return;const c=$("banner").classList.toggle("closed");b.textContent=c?"▲":"✕"});
 if(BAN){document.body.classList.add("bandeau");if(new URLSearchParams(location.search).has("transparent"))document.body.classList.add("transparent")}
 $("bn").onclick=()=>window.open(location.pathname+"?bandeau"+(DEMO?"&demo":""),"bandeau","width=1280,height=190");
 // -- Thème sombre et actualisation

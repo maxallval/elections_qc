@@ -4,14 +4,14 @@
 <title>Élections Québec 2026 – Résultats en direct</title>
 <script src="config.js"></script>
 <style>
-:root{--bg:#f4f6f9;--ink:#18202b;--mute:#667085;--line:#dde1e7;--none:#d9dde4;--card:#fff;--cardA:#ffffffe6;--bar:#e8ecf1;--stroke:#fff;--panel:#fff;--accent:#7c5cff}
-[data-theme=dark]{--panel:#121821;--bg:#0d1117;--ink:#e6edf3;--mute:#8b949e;--line:#232a33;--none:#252b34;--card:#161b22;--cardA:#161b22e6;--bar:#262d36;--stroke:#0d1117;}
+:root{--bg:#D9D9D955;--ink:#353535;--mute:#6b6f73;--line:#D9D9D9;--none:#e6e6e6;--card:#fff;--cardA:#ffffffee;--bar:#D9D9D9;--stroke:#fff;--panel:#fff;--accent:#3C6E71;--hi:#3C6E71;--seg:#D9D9D955;--segh:#D9D9D9}
+[data-theme=dark]{--panel:#353535;--bg:#262626;--ink:#fff;--mute:#b0b4b8;--line:#4a4a4a;--none:#444;--card:#404040;--cardA:#353535ee;--bar:#505050;--stroke:#262626;--accent:#3C6E71;--hi:#284B63;--seg:#404040;--segh:#284B63}
 *{box-sizing:border-box}
 html,body{height:100%}
 body{margin:0;font:14px/1.4 Inter,"Segoe UI",system-ui,sans-serif;color:var(--ink);background:var(--bg);display:grid;grid-template-rows:auto minmax(0,1fr) auto;height:100vh;overflow:hidden}
 a{color:inherit}
 button{font:inherit;font-size:13px;color:var(--ink);background:var(--card);border:0;border-radius:0;padding:6px 12px;cursor:pointer}
-button.on{background:#7c5cff44;box-shadow:inset 0 -2px 0 var(--accent)}
+button.on{color:#fff;background:color-mix(in srgb,var(--hi) 70%,transparent);box-shadow:inset 0 -2px 0 var(--accent)}
 button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 16px;background:var(--panel);flex-wrap:wrap}
 .hl{display:flex;align-items:baseline;gap:14px;min-width:0;flex-wrap:wrap}
@@ -51,7 +51,7 @@ aside h2:first-of-type{margin-top:14px}
 .srch{position:relative}
 #q{width:100%;padding:9px 12px;border-radius:0;border:0;background:var(--card);color:var(--ink);font:inherit}
 #qr{position:absolute;left:0;right:0;top:100%;margin-top:4px;background:var(--card);border:0;border-radius:0;z-index:20;max-height:260px;overflow:auto}
-#qr div{padding:8px 12px;cursor:pointer}#qr div:hover{background:#7c5cff22}
+#qr div{padding:8px 12px;cursor:pointer}#qr div:hover{background:color-mix(in srgb,var(--accent) 30%,transparent)}
 .sub{color:var(--mute);font-size:13px;margin-bottom:10px}
 #filters .fr{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;align-items:center}
 #filters button{border-radius:0;padding:4px 11px;font-weight:600}
@@ -84,20 +84,19 @@ aside h2:first-of-type{margin-top:14px}
 #banner{background:var(--panel);padding:8px 14px 10px}
 #banner .bl{display:flex;align-items:center;gap:10px;margin-bottom:6px}
 #banner .rs{display:inline-block;width:12px;height:12px;background:#e02424}
-#banner .bl b{background:#fff;color:#0d1117;padding:3px 14px;font-size:17px;text-transform:uppercase;letter-spacing:.02em}
+#banner .bl b{background:#fff;color:#284B63;padding:3px 14px;font-size:17px;text-transform:uppercase;letter-spacing:.02em}
 #banner .br{display:grid;grid-template-columns:150px repeat(5,minmax(0,1fr));gap:8px;align-items:end}
 #banner .bbox{background:var(--card);padding:8px 10px;text-align:center;font-size:11px;font-weight:700;letter-spacing:.05em}
 #banner .bbox strong{display:block;font-size:26px;letter-spacing:0}
 #banner .bbox span{display:block;color:var(--mute);font-weight:500}
 #banner .bpct{text-align:right;font-size:12px;color:var(--mute);border-bottom:3px solid var(--c);margin-bottom:4px}
 #banner .bblock{background:var(--c);color:#fff;display:flex;align-items:center;padding:0 14px;height:62px;position:relative}
-#banner .bblock b{position:absolute;top:0;left:0;background:#0d1117;padding:1px 10px;font-size:15px}
+#banner .bblock b{position:absolute;top:0;left:0;background:#284B63;padding:1px 10px;font-size:15px}
 #banner .bblock em{font-style:normal;font-size:42px;font-weight:700;margin-left:auto}
 body.bandeau{display:block;height:auto;overflow:visible}
 body.bandeau>*:not(#banner){display:none!important}
 body.bandeau.transparent{background:transparent}
-body.bandeau.transparent #banner{background:#0d1117cc}
-
+body.bandeau.transparent #banner{background:#284B63cc}
 /* surveillances, régions, alertes, badge */
 #wchips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
 .wc{border-left:4px solid var(--c);border-radius:0}.wc small{opacity:.7;margin-left:4px}
@@ -108,9 +107,9 @@ body.bandeau.transparent #banner{background:#0d1117cc}
 .mz{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:6px;margin-top:6px}
 .mz div{border-radius:0;padding:6px 8px;font-size:12px;line-height:1.2;min-height:46px;cursor:pointer;background:var(--card);border:0;border-left:5px solid var(--c,var(--none))}
 .mz div small{display:block;color:var(--mute)}
-.bd{display:inline-block;margin-left:6px;padding:0 7px;border-radius:0;font-size:11px;border:1px solid var(--accent);color:var(--ink);background:#7c5cff22}
+.bd{display:inline-block;margin-left:6px;padding:0 7px;border-radius:0;font-size:11px;border:1px solid var(--accent);color:var(--ink);background:color-mix(in srgb,var(--accent) 30%,transparent)}
 .rg{border-top:1px solid var(--line);padding:8px 0;cursor:pointer}
-.rg:hover{background:#7c5cff10}
+.rg:hover{background:color-mix(in srgb,var(--accent) 12%,transparent)}
 .rg .rn{display:flex;justify-content:space-between;gap:8px}.rg .rn span{color:var(--mute);font-size:12px}
 .stack{display:flex;height:10px;border-radius:0;overflow:hidden;background:var(--bar);margin:6px 0 4px}
 .stack i{display:block;height:100%}
@@ -126,16 +125,16 @@ dialog .dh{display:flex;justify-content:space-between;align-items:center;gap:8px
 #wdq{width:100%;padding:8px 10px;border-radius:0;border:0;background:var(--bg);color:var(--ink);font:inherit;margin-bottom:8px}
 #wdl{max-height:50vh;overflow:auto}
 #wdl label{display:flex;gap:8px;padding:4px 2px;cursor:pointer}
-path.sel{stroke:#fff;stroke-width:calc(var(--u,.01)*3px)}
+path.sel{stroke:var(--ink);stroke-width:calc(var(--u,.01)*3px)}
 #gl path{fill:none;stroke:var(--g);stroke-linejoin:round;pointer-events:none}
 #gl .gw{stroke-width:calc(var(--u,.01)*9px);stroke-opacity:.28}
 svg.moving #gl{display:none}
 #gl .gn{stroke-width:calc(var(--u,.01)*2.2px)}
 path.pulse{animation:pls 1.3s ease-out 3}
-@keyframes pls{0%{stroke:#fff;stroke-width:calc(var(--u,.01)*2px)}50%{stroke:#fff;stroke-width:calc(var(--u,.01)*7px)}100%{stroke-width:calc(var(--u,.01)*.6px)}}
-@media(prefers-reduced-motion:reduce){path.pulse{animation:none;stroke:#fff;stroke-width:calc(var(--u,.01)*4px)}}
+@keyframes pls{0%{stroke:var(--ink);stroke-width:calc(var(--u,.01)*2px)}50%{stroke:var(--ink);stroke-width:calc(var(--u,.01)*7px)}100%{stroke-width:calc(var(--u,.01)*.6px)}}
+@media(prefers-reduced-motion:reduce){path.pulse{animation:none;stroke:var(--ink);stroke-width:calc(var(--u,.01)*4px)}}
 button:hover{background:color-mix(in srgb,var(--ink) 10%,var(--card))}
-button.on:hover{background:#7c5cff55}
+button.on:hover{background:color-mix(in srgb,var(--hi) 80%,transparent)}
 .dot,#status::before{border-radius:50%}
 #mosaic{position:absolute;left:12px;right:12px;top:4px;max-height:calc(100% - 48px);z-index:7;background:var(--cardA);padding:12px 14px;overflow:auto}
 #mosaic[hidden]{display:none}
@@ -186,8 +185,6 @@ aside{display:flex;flex-direction:column}
 #tools .ic{margin-right:6px}
 #hdb{line-height:1.55;font-size:14px;padding:4px 0}
 /* segments du panneau de droite */
-:root{--seg:#f4f6f9;--segh:#e3e8ef}
-[data-theme=dark]{--seg:#1c2430;--segh:#2a3545}
 aside{padding:12px}
 #b-search{margin-bottom:12px}
 .blk:not(#b-search){background:var(--seg);margin:0 0 12px;padding:0 12px 12px}
@@ -234,7 +231,7 @@ aside{padding:12px}
 #foot:empty{display:none}
 #ndlg{width:min(560px,94vw)}
 .rk{border-top:1px solid var(--line);padding:9px 0;cursor:pointer}
-.rk:hover{background:#7c5cff10}
+.rk:hover{background:color-mix(in srgb,var(--accent) 12%,transparent)}
 .rk .rn{display:flex;justify-content:space-between;gap:8px}
 .rk .rn span{color:var(--mute);font-size:12px}
 .rk .no{font-style:normal;color:var(--mute);display:inline-block;min-width:30px}
@@ -289,6 +286,7 @@ aside{padding:12px}
 <div id="banner"></div>
 <footer id="foot"></footer>
 <script>
+const MQ=matchMedia("(max-width:800px)");
 // ====== CONFIGURATION ======
 const BASE="https://donnees.electionsquebec.qc.ca";
 const HIST={ // URLs des archives (dgeq.org/archives.html). La carte de 2022/2018 diffère de celle de 2026 → fournir le GeoJSON d'époque.
@@ -658,8 +656,8 @@ function selectRiding(c,zoom){
   setBlk("b-det",false);
   if(paths[SELC])paths[SELC].classList.remove("sel");
   SELC=c;paths[c].classList.add("sel");svg.appendChild(paths[c]);{const gl=document.getElementById("gl");if(gl)svg.appendChild(gl)}renderDet();
-  if(matchMedia("(max-width:800px)").matches)$("b-det").scrollIntoView({behavior:"smooth",block:"start"});
-  if(zoom&&!matchMedia("(max-width:800px)").matches)fitTo(paths[c].getBBox());
+  if(MQ.matches)$("b-det").scrollIntoView({behavior:"smooth",block:"start"});
+  if(zoom&&!MQ.matches)fitTo(paths[c].getBBox());
 }
 function renderDet(){
   const el=$("det");
@@ -752,7 +750,7 @@ function renderWatch(){
     const led=codes.filter(c=>{const i=info(c);return i&&i.lead.p===WACT}).length,nores=codes.filter(c=>!info(c)).length;
     $("wsum").innerHTML=`<b style="color:${PARTIES[WACT].c}">${WACT}</b> en tête dans <b>${led}</b> sur ${codes.length} · ${nores} sans résultat`;
     const items=codes.map(c=>({c,i:info(c)})).sort((a,b)=>(a.i?a.i.gap:99)-(b.i?b.i.gap:99));
-    const mob=matchMedia("(max-width:800px)").matches,ov=WMOS&&!mob,mo=$("mosaic");
+    const mob=MQ.matches,ov=WMOS&&!mob,mo=$("mosaic");
     if(ov){ // mosaïque affichée par-dessus la carte
       const st=mo.scrollTop;mo.hidden=false;
       mo.innerHTML=`<div class="mh"><div><span class="big" style="color:${PARTIES[WACT].c}">${WACT}</span><span class="sub">${WACT} en tête dans <b>${led}</b> sur ${codes.length} · ${nores} sans résultat</span></div><button id="mx" aria-label="Fermer la mosaïque">Fermer ✕</button></div>
@@ -788,7 +786,7 @@ function renderWdl(){
 }
 $("wm-e").onclick=()=>{if(!WACT){$("wsum").textContent="Choisissez d'abord un parti, puis cliquez sur Modifier.";return}
   $("wdt").textContent="Surveillance "+WACT;$("wdq").value="";renderWdl();$("wdlg").showModal()};
-matchMedia("(max-width:800px)").addEventListener("change",()=>{SIGK=null;paint()});
+MQ.addEventListener("change",()=>{SIGK=null;paint()});
 $("wdq").oninput=renderWdl;$("wdx").onclick=()=>$("wdlg").close();
 $("wdr").onclick=()=>{if(WCUSTOM){delete WCUSTOM[WACT];saveWatch()}renderWdl();paint()};
 // -- Régions: participation et votes
@@ -809,7 +807,7 @@ function renderRegions(){
     return `<div class="rg" data-r="${r.k}"><div class="rn"><b>${esc(r.n)}</b><span>${a.ins?"participation "+pc100(a.exe/a.ins*100):"—"}</span></div>
     <div class="stack">${a.tot?ks.filter(k=>a.v[k]).map(k=>`<i title="${k} ${pc100(a.v[k]/a.tot*100)}" style="width:${a.v[k]/a.tot*100}%;background:${PARTIES[k]?.c||"#8a93a0"}"></i>`).join(""):""}</div>
     <div class="rc"><span>${top?`${dotH(top)}${top==="AUTRE"?"Autres":top} ${pc100(a.v[top]/a.tot*100)} des votes`:`${a.codes.length} circonscriptions`}</span><span>${Object.entries(a.seats).sort((x,y)=>y[1]-x[1]).map(([k,n])=>`<em>${dotH(k)}${k} ${n}</em>`).join("")}</span></div></div>`}).join("");
-  $("rg").querySelectorAll(".rg").forEach(d=>d.onclick=()=>{if(matchMedia("(max-width:800px)").matches)return;const a=A[d.dataset.r],bs=a.codes.filter(c=>paths[c]).map(c=>paths[c].getBBox());if(!bs.length)return;
+  $("rg").querySelectorAll(".rg").forEach(d=>d.onclick=()=>{if(MQ.matches)return;const a=A[d.dataset.r],bs=a.codes.filter(c=>paths[c]).map(c=>paths[c].getBBox());if(!bs.length)return;
     const x0=Math.min(...bs.map(b=>b.x)),y0=Math.min(...bs.map(b=>b.y)),x1=Math.max(...bs.map(b=>b.x+b.width)),y1=Math.max(...bs.map(b=>b.y+b.height));
     fitTo({x:x0,y:y0,width:x1-x0,height:y1-y0})});
 }
@@ -876,7 +874,7 @@ document.querySelectorAll("aside .blk .hh").forEach(h=>{const c=document.createE
 document.querySelector("aside").addEventListener("click",e=>{const h=e.target.closest(".hh");if(!h||e.target.closest(".ib"))return;
   const b=h.closest(".blk");if(b)setBlk(b.id,!b.classList.contains("closed"))});
 // -- Mobile: actualiser, thème et alertes passent en bas de page
-const mqM=matchMedia("(max-width:800px)");
+const mqM=MQ;
 function placeTools(){const t=$("tools"),f=$("foot"),h=document.querySelector("header");
   if(mqM.matches){if(t.parentNode!==f)f.appendChild(t)}else if(t.parentNode!==h)h.appendChild(t)}
 mqM.addEventListener("change",placeTools);placeTools();

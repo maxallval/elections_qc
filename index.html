@@ -196,6 +196,19 @@ aside{padding:12px}
 .blk.closed>*:not(.hh){display:none!important}
 .blk.closed:not(#b-search) .hh{margin-bottom:0}
 .pc,.d22{background:var(--panel)}
+#jump{display:flex;flex:none;gap:6px;overflow-x:auto;position:sticky;top:-12px;z-index:12;background:var(--panel);margin:0 -12px 12px;padding:8px 12px;scrollbar-width:none;box-shadow:0 1px 0 var(--line)}
+#jump::-webkit-scrollbar{display:none}
+#jump button{flex:none;border-radius:0;padding:4px 12px;font-weight:600;font-size:12px;background:var(--seg)}
+#jump button.on{background:#7c5cff44;box-shadow:inset 0 -2px 0 var(--accent)}
+.blk{scroll-margin-top:52px}
+#top{position:fixed;right:14px;bottom:16px;width:44px;height:44px;padding:0;font-size:20px;z-index:40;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+#top[hidden]{display:none}
+@media(max-width:800px){
+ #jump{top:var(--bh,64px);margin:0 -12px 10px}
+ .blk{scroll-margin-top:calc(var(--bh,64px) + 56px)}
+ #jump button{min-height:36px}
+ .pv,.rg,.rk,#chg>*{padding-top:10px;padding-bottom:10px}
+}
 @media(max-width:800px){
  body{display:flex;flex-direction:column;height:auto;overflow:visible}
  header{order:0;padding:8px 12px;gap:6px}
@@ -265,6 +278,7 @@ aside{padding:12px}
 </section>
 <aside>
 <div class="blk" id="b-search"><div class="srch"><input id="q" type="search" placeholder="Rechercher une circonscription…" autocomplete="off" aria-label="Rechercher une circonscription"><div id="qr" hidden></div></div></div>
+<nav id="jump" aria-label="Aller à une section"><button data-j="b-seats" class="desk">Sièges</button><button data-j="chgw">Changements</button><button data-j="b-niv">Niveaux</button><button data-j="wsec">À surveiller</button><button data-j="rgw">Régions</button></nav>
 <section class="blk" id="b-seats"><div class="hh"><h2>Sièges</h2><button class="ib" data-h="seats" aria-label="Aide : sièges">ⓘ</button></div><div id="parties"></div><div class="sub" id="sub"></div></section>
 <section class="blk" id="b-det" hidden><div class="hh"><h2>Circonscription</h2></div><div id="det"></div></section>
 <section class="blk" id="chgw"><div class="hh"><h2>Changements en direct</h2><button class="ib" data-h="chg" aria-label="Aide : changements">ⓘ</button></div><div class="sub" id="csub"></div><div id="chg"></div></section>
@@ -278,6 +292,7 @@ aside{padding:12px}
 <section class="blk" id="rgw"><div class="hh"><h2>Régions</h2><button class="ib" data-h="reg" aria-label="Aide : régions">ⓘ</button></div><div class="sub" id="rsub"></div><div id="rg"></div></section>
 </aside>
 </main>
+<button id="top" aria-label="Haut de page" hidden>↑</button>
 <div id="tip"></div>
 <div id="toasts" aria-live="polite"></div>
 <dialog id="ndlg"><div class="dh"><b id="ndt"></b><button id="ndx">Fermer</button></div><div id="ndb"></div></dialog>
@@ -681,7 +696,7 @@ qi.addEventListener("input",()=>{
 qr.addEventListener("click",e=>{const d=e.target.closest("[data-c]");if(!d)return;selectRiding(d.dataset.c,true);qr.hidden=true;qi.value=""});
 document.addEventListener("click",e=>{if(!e.target.closest(".srch"))qr.hidden=true});
 // -- Mise à jour et mode démo
-setInterval(()=>{$("upd").textContent=view==="live"?`MAJ : ${lastOk?lastOk.toLocaleTimeString("fr-CA"):"—"} · prochaine vérification dans ${Math.max(0,Math.round((nextAt-Date.now())/1000))} s`:""},1000);
+setInterval(()=>{$("upd").textContent=view==="live"?`Prochaine vérification dans ${Math.max(0,Math.round((nextAt-Date.now())/1000))} s`:""},1000);
 $("dm").classList.toggle("on",DEMO);
 $("dm").onclick=()=>{const u=new URL(location.href);DEMO?u.searchParams.delete("demo"):u.searchParams.set("demo","1");location.href=u.href};
 // ====== SORTANTS, SURVEILLANCES, RÉGIONS, ALERTES ======
@@ -873,6 +888,22 @@ document.querySelectorAll("aside .blk .hh").forEach(h=>{const c=document.createE
 [...CLOSED].forEach(id=>setBlk(id,true));
 document.querySelector("aside").addEventListener("click",e=>{const h=e.target.closest(".hh");if(!h||e.target.closest(".ib"))return;
   const b=h.closest(".blk");if(b)setBlk(b.id,!b.classList.contains("closed"))});
+
+// -- Navigation rapide, raccourcis, retour en haut
+(function(){
+  const nav=$("jump"),ban=$("banner"),tp=$("top");
+  nav.addEventListener("click",e=>{const b=e.target.closest("button[data-j]");if(!b)return;const t=$(b.dataset.j);if(!t||t.hidden)return;
+    if(t.classList.contains("closed"))setBlk(t.id,false);if(MQ.matches)t.scrollIntoView({behavior:"smooth",block:"start"});
+    else{const A=document.querySelector("aside");A.scrollTo({top:t.getBoundingClientRect().top-A.getBoundingClientRect().top+A.scrollTop-nav.offsetHeight-6,behavior:"smooth"})}});
+  const bh=()=>document.documentElement.style.setProperty("--bh",ban.offsetHeight+"px");
+  bh();try{new ResizeObserver(bh).observe(ban)}catch(e){addEventListener("resize",bh)}
+  addEventListener("scroll",()=>{tp.hidden=!(MQ.matches&&scrollY>600)},{passive:true});
+  tp.onclick=()=>scrollTo({top:0,behavior:"smooth"});
+  addEventListener("keydown",e=>{if(e.key==="/"&&!/INPUT|TEXTAREA/.test(document.activeElement.tagName)){e.preventDefault();qi.focus()}
+    else if(e.key==="Escape"&&document.activeElement===qi){qi.value="";qr.hidden=true;qi.blur()}});
+  qi.placeholder=MQ.matches?"Rechercher une circonscription…":"Rechercher une circonscription…  ( / )";
+  try{if(MQ.matches&&localStorage.getItem("blk")===null)["rgw","wsec"].forEach(id=>setBlk(id,true))}catch(e){}
+})();
 // -- Mobile: actualiser, thème et alertes passent en bas de page
 const mqM=MQ;
 function placeTools(){const t=$("tools"),f=$("foot"),h=document.querySelector("header");

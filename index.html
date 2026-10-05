@@ -4,14 +4,14 @@
 <title>Élections Québec 2026 – Résultats en direct</title>
 <script src="config.js"></script>
 <style>
-:root{--bg:#D9D9D955;--ink:#353535;--mute:#6b6f73;--line:#D9D9D9;--none:#e6e6e6;--card:#fff;--cardA:#ffffffee;--bar:#D9D9D9;--stroke:#fff;--panel:#fff;--accent:#3C6E71;--hi:#3C6E71;--seg:#D9D9D955;--segh:#D9D9D9}
-[data-theme=dark]{--panel:#353535;--bg:#262626;--ink:#fff;--mute:#b0b4b8;--line:#4a4a4a;--none:#444;--card:#404040;--cardA:#353535ee;--bar:#505050;--stroke:#262626;--accent:#3C6E71;--hi:#284B63;--seg:#404040;--segh:#284B63}
+:root{--bg:#f4f6f9;--ink:#18202b;--mute:#667085;--line:#dde1e7;--none:#d9dde4;--card:#fff;--cardA:#ffffffe6;--bar:#e8ecf1;--stroke:#fff;--panel:#fff;--accent:#7c5cff;--seg:#f4f6f9;--segh:#e3e8ef}
+[data-theme=dark]{--panel:#121821;--bg:#0d1117;--ink:#e6edf3;--mute:#8b949e;--line:#232a33;--none:#252b34;--card:#161b22;--cardA:#161b22e6;--bar:#262d36;--stroke:#0d1117;--seg:#1c2430;--segh:#2a3545}
 *{box-sizing:border-box}
 html,body{height:100%}
 body{margin:0;font:14px/1.4 Inter,"Segoe UI",system-ui,sans-serif;color:var(--ink);background:var(--bg);display:grid;grid-template-rows:auto minmax(0,1fr) auto;height:100vh;overflow:hidden}
 a{color:inherit}
 button{font:inherit;font-size:13px;color:var(--ink);background:var(--card);border:0;border-radius:0;padding:6px 12px;cursor:pointer}
-button.on{color:#fff;background:color-mix(in srgb,var(--hi) 70%,transparent);box-shadow:inset 0 -2px 0 var(--accent)}
+button.on{background:#7c5cff44;box-shadow:inset 0 -2px 0 var(--accent)}
 button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 16px;background:var(--panel);flex-wrap:wrap}
 .hl{display:flex;align-items:baseline;gap:14px;min-width:0;flex-wrap:wrap}
@@ -51,7 +51,7 @@ aside h2:first-of-type{margin-top:14px}
 .srch{position:relative}
 #q{width:100%;padding:9px 12px;border-radius:0;border:0;background:var(--card);color:var(--ink);font:inherit}
 #qr{position:absolute;left:0;right:0;top:100%;margin-top:4px;background:var(--card);border:0;border-radius:0;z-index:20;max-height:260px;overflow:auto}
-#qr div{padding:8px 12px;cursor:pointer}#qr div:hover{background:color-mix(in srgb,var(--accent) 30%,transparent)}
+#qr div{padding:8px 12px;cursor:pointer}#qr div:hover{background:#7c5cff22}
 .sub{color:var(--mute);font-size:13px;margin-bottom:10px}
 #filters .fr{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;align-items:center}
 #filters button{border-radius:0;padding:4px 11px;font-weight:600}
@@ -84,19 +84,19 @@ aside h2:first-of-type{margin-top:14px}
 #banner{background:var(--panel);padding:8px 14px 10px}
 #banner .bl{display:flex;align-items:center;gap:10px;margin-bottom:6px}
 #banner .rs{display:inline-block;width:12px;height:12px;background:#e02424}
-#banner .bl b{background:#fff;color:#284B63;padding:3px 14px;font-size:17px;text-transform:uppercase;letter-spacing:.02em}
+#banner .bl b{background:#fff;color:#0d1117;padding:3px 14px;font-size:17px;text-transform:uppercase;letter-spacing:.02em}
 #banner .br{display:grid;grid-template-columns:150px repeat(5,minmax(0,1fr));gap:8px;align-items:end}
 #banner .bbox{background:var(--card);padding:8px 10px;text-align:center;font-size:11px;font-weight:700;letter-spacing:.05em}
 #banner .bbox strong{display:block;font-size:26px;letter-spacing:0}
 #banner .bbox span{display:block;color:var(--mute);font-weight:500}
 #banner .bpct{text-align:right;font-size:12px;color:var(--mute);border-bottom:3px solid var(--c);margin-bottom:4px}
 #banner .bblock{background:var(--c);color:#fff;display:flex;align-items:center;padding:0 14px;height:62px;position:relative}
-#banner .bblock b{position:absolute;top:0;left:0;background:#284B63;padding:1px 10px;font-size:15px}
+#banner .bblock b{position:absolute;top:0;left:0;background:#0d1117;padding:1px 10px;font-size:15px}
 #banner .bblock em{font-style:normal;font-size:42px;font-weight:700;margin-left:auto}
 body.bandeau{display:block;height:auto;overflow:visible}
 body.bandeau>*:not(#banner){display:none!important}
 body.bandeau.transparent{background:transparent}
-body.bandeau.transparent #banner{background:#284B63cc}
+body.bandeau.transparent #banner{background:#0d1117cc}
 /* surveillances, régions, alertes, badge */
 #wchips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
 .wc{border-left:4px solid var(--c);border-radius:0}.wc small{opacity:.7;margin-left:4px}
@@ -107,9 +107,9 @@ body.bandeau.transparent #banner{background:#284B63cc}
 .mz{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:6px;margin-top:6px}
 .mz div{border-radius:0;padding:6px 8px;font-size:12px;line-height:1.2;min-height:46px;cursor:pointer;background:var(--card);border:0;border-left:5px solid var(--c,var(--none))}
 .mz div small{display:block;color:var(--mute)}
-.bd{display:inline-block;margin-left:6px;padding:0 7px;border-radius:0;font-size:11px;border:1px solid var(--accent);color:var(--ink);background:color-mix(in srgb,var(--accent) 30%,transparent)}
+.bd{display:inline-block;margin-left:6px;padding:0 7px;border-radius:0;font-size:11px;border:1px solid var(--accent);color:var(--ink);background:#7c5cff22}
 .rg{border-top:1px solid var(--line);padding:8px 0;cursor:pointer}
-.rg:hover{background:color-mix(in srgb,var(--accent) 12%,transparent)}
+.rg:hover{background:#7c5cff10}
 .rg .rn{display:flex;justify-content:space-between;gap:8px}.rg .rn span{color:var(--mute);font-size:12px}
 .stack{display:flex;height:10px;border-radius:0;overflow:hidden;background:var(--bar);margin:6px 0 4px}
 .stack i{display:block;height:100%}
@@ -125,16 +125,16 @@ dialog .dh{display:flex;justify-content:space-between;align-items:center;gap:8px
 #wdq{width:100%;padding:8px 10px;border-radius:0;border:0;background:var(--bg);color:var(--ink);font:inherit;margin-bottom:8px}
 #wdl{max-height:50vh;overflow:auto}
 #wdl label{display:flex;gap:8px;padding:4px 2px;cursor:pointer}
-path.sel{stroke:var(--ink);stroke-width:calc(var(--u,.01)*3px)}
+path.sel{stroke:#fff;stroke-width:calc(var(--u,.01)*3px)}
 #gl path{fill:none;stroke:var(--g);stroke-linejoin:round;pointer-events:none}
 #gl .gw{stroke-width:calc(var(--u,.01)*9px);stroke-opacity:.28}
 svg.moving #gl{display:none}
 #gl .gn{stroke-width:calc(var(--u,.01)*2.2px)}
 path.pulse{animation:pls 1.3s ease-out 3}
-@keyframes pls{0%{stroke:var(--ink);stroke-width:calc(var(--u,.01)*2px)}50%{stroke:var(--ink);stroke-width:calc(var(--u,.01)*7px)}100%{stroke-width:calc(var(--u,.01)*.6px)}}
-@media(prefers-reduced-motion:reduce){path.pulse{animation:none;stroke:var(--ink);stroke-width:calc(var(--u,.01)*4px)}}
+@keyframes pls{0%{stroke:#fff;stroke-width:calc(var(--u,.01)*2px)}50%{stroke:#fff;stroke-width:calc(var(--u,.01)*7px)}100%{stroke-width:calc(var(--u,.01)*.6px)}}
+@media(prefers-reduced-motion:reduce){path.pulse{animation:none;stroke:#fff;stroke-width:calc(var(--u,.01)*4px)}}
 button:hover{background:color-mix(in srgb,var(--ink) 10%,var(--card))}
-button.on:hover{background:color-mix(in srgb,var(--hi) 80%,transparent)}
+button.on:hover{background:#7c5cff55}
 .dot,#status::before{border-radius:50%}
 #mosaic{position:absolute;left:12px;right:12px;top:4px;max-height:calc(100% - 48px);z-index:7;background:var(--cardA);padding:12px 14px;overflow:auto}
 #mosaic[hidden]{display:none}
@@ -231,7 +231,7 @@ aside{padding:12px}
 #foot:empty{display:none}
 #ndlg{width:min(560px,94vw)}
 .rk{border-top:1px solid var(--line);padding:9px 0;cursor:pointer}
-.rk:hover{background:color-mix(in srgb,var(--accent) 12%,transparent)}
+.rk:hover{background:#7c5cff10}
 .rk .rn{display:flex;justify-content:space-between;gap:8px}
 .rk .rn span{color:var(--mute);font-size:12px}
 .rk .no{font-style:normal;color:var(--mute);display:inline-block;min-width:30px}

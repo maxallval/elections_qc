@@ -1,0 +1,15 @@
+[build]
+  publish = "."
+
+[functions]
+  directory = "netlify/functions"
+
+[[redirects]]
+  from = "/api/resultats"
+  to = "/.netlify/functions/resultats"
+  status = 200
+
+[[redirects]]
+  from = "/api/candidatures"
+  to = "/.netlify/functions/candidatures"
+  status = 200

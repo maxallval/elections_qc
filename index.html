@@ -207,7 +207,7 @@ aside{padding:12px}
 #top{position:fixed;right:14px;bottom:16px;width:44px;height:44px;padding:0;font-size:20px;z-index:40;box-shadow:0 4px 14px rgba(0,0,0,.3)}
 #top[hidden]{display:none}
 @media(max-width:800px){
- #jump{top:var(--bh,64px);margin:0 -12px;padding-bottom:12px}
+ #jump{top:calc(var(--bh,64px) - 2px);margin:0 -12px;padding:10px 12px 12px;box-shadow:0 -4px 0 var(--panel),0 1px 0 var(--line)}
  .blk{scroll-margin-top:calc(var(--bh,64px) + 56px)}
  #jump .jr button{min-height:36px}
  .pv,.rg,.rk,#chg>*{padding-top:10px;padding-bottom:10px}
@@ -902,7 +902,7 @@ document.querySelector("aside").addEventListener("click",e=>{const h=e.target.cl
   nav.addEventListener("click",e=>{const b=e.target.closest("button[data-j]");if(!b)return;const t=$(b.dataset.j);if(!t||t.hidden)return;
     if(t.classList.contains("closed"))setBlk(t.id,false);if(MQ.matches)t.scrollIntoView({behavior:"smooth",block:"start"});
     else{const A=document.querySelector("aside");A.scrollTo({top:t.getBoundingClientRect().top-A.getBoundingClientRect().top+A.scrollTop-nav.offsetHeight-6,behavior:"smooth"})}});
-  const bh=()=>document.documentElement.style.setProperty("--bh",ban.offsetHeight+"px");
+  const bh=()=>document.documentElement.style.setProperty("--bh",ban.getBoundingClientRect().height+"px");
   bh();try{new ResizeObserver(bh).observe(ban)}catch(e){addEventListener("resize",bh)}
   addEventListener("scroll",()=>{tp.hidden=!(MQ.matches&&scrollY>600)},{passive:true});
   tp.onclick=()=>scrollTo({top:0,behavior:"smooth"});

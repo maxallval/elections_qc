@@ -232,6 +232,16 @@ aside{padding:12px}
  #foot #tools .ic{margin-right:6px}
 }
 #foot:empty{display:none}
+#route{margin:2px 0 12px}
+.rbar{position:relative;display:flex;height:16px;background:var(--bar);cursor:pointer}
+.rbar i{flex:1 0 0;min-width:0;height:100%}
+.rbar u{position:absolute;top:-4px;bottom:-4px;width:3px;background:#fff;box-shadow:0 0 0 1px #0007;pointer-events:none;transform:translateX(-1px)}
+.rml{font-size:12px;color:var(--mute);margin-top:6px}
+#ndlg{width:min(560px,94vw)}
+#ndb{max-height:70vh;overflow:auto}
+#ndb .pv{padding:8px 0}
+.pb{display:grid;grid-template-columns:72px 1fr 44px;gap:8px;align-items:center;margin:6px 0}
+.pb b{text-align:right;font-size:13px}
 #filters button[hidden]{display:none}
 </style></head><body>
 <header><div class="hl"><h1>Soirée électorale · Québec 2026</h1><span id="status">Chargement…</span></div>
@@ -256,6 +266,7 @@ aside{padding:12px}
 <section class="blk" id="chgw"><div class="hh"><h2>Changements en direct</h2><button class="ib" data-h="chg" aria-label="Aide : changements">ⓘ</button></div><div class="sub" id="csub"></div><div id="chg"></div></section>
 <section class="blk" id="b-niv"><div class="hh"><h2 id="th">Niveaux de course</h2><button class="ib" data-h="niv" aria-label="Aide : niveaux">ⓘ</button></div>
 <div id="filters" aria-label="Filtrer par niveau"><div class="fr"><button data-t="pivot" aria-pressed="false">Pivots</button><button data-t="enclin" aria-pressed="false">Enclins</button><button data-t="probable" aria-pressed="false">Probables</button><button data-t="solide" aria-pressed="false">Solides</button><button id="fx" hidden>Tout afficher</button></div></div>
+<div id="route"></div>
 <div class="sub" id="psub"></div><div id="tiers"></div></section>
 <section class="blk" id="wsec"><div class="hh"><h2>Circonscriptions à surveiller</h2><button class="ib" data-h="watch" aria-label="Aide : surveillances">ⓘ</button></div>
 <div id="wchips"></div><div class="sub" id="wsum"></div>
@@ -266,6 +277,7 @@ aside{padding:12px}
 </main>
 <div id="tip"></div>
 <div id="toasts" aria-live="polite"></div>
+<dialog id="ndlg"><div class="dh"><b id="ndt"></b><button id="ndx">Fermer</button></div><div id="ndb"></div></dialog>
 <dialog id="hdlg"><div class="dh"><b id="hdt"></b><button id="hdx">Fermer</button></div><div id="hdb"></div></dialog>
 <dialog id="wdlg"><div class="dh"><b id="wdt"></b><button id="wdx">Fermer</button></div><input id="wdq" placeholder="Filtrer les circonscriptions…" aria-label="Filtrer"><div id="wdl"></div><div class="dh" style="margin:10px 0 0"><button id="wdr">Réinitialiser (par défaut)</button></div></dialog>
 <div id="banner"></div>
@@ -449,19 +461,28 @@ function paintNow(){
   if(Q)document.querySelectorAll("#filters [data-t]").forEach(b=>{const n=b.querySelector("small");if(n)n.textContent=all.filter(x=>x.k.tier===b.dataset.t).length});
   $("th").textContent=Q?"Niveaux de course":"Courses par niveau";
   $("psub").textContent=Q?`${all.length} classée(s) · ${nWait} en attente de résultats`:`${all.length} avec résultats`;
-  const openT=window._openT||(window._openT=new Set());
-  $("tiers").innerHTML=tiers.filter(t=>!Q||!SEL.size||SEL.has(Object.keys(IDX)[tiers.indexOf(t)])).map(t=>{
-    const cnt={};t.items.forEach(({i,q})=>{const kk=q?q[1]:i.lead.p;cnt[kk]=(cnt[kk]||0)+1});
-    const chips=Object.entries(cnt).sort((a,b)=>b[1]-a[1]).map(([kk,v])=>`<span>${kk.split("/").map(dot).join("")}${kk} ${v}</span>`).join("");
-    const rows=t.items.map(x=>{
-      const {c,i,q,k}=x,n=esc(nameOf(c));
-      const tag=q?`${lbl(q[0],q[1])} · ${k.p>=99.5?k.p.toFixed(1):Math.round(k.p)} %`:(i.won?"terminé":"en cours");
-      const live=i?`${dot(i.lead.p)}${esc(i.lead.p)} ${i.lead.v.toLocaleString("fr-CA")}${i.second?` · ${dot(i.second.p)}${esc(i.second.p)} ${i.second.v.toLocaleString("fr-CA")}`:""}
-        <span> · écart ${(i.lead.v-(i.second?i.second.v:0)).toLocaleString("fr-CA")} (${i.gap.toFixed(1)} pt)${i.won?" · terminé":" · "+Math.round(i.r.pct)+" % dépouillé"}</span>`
-        :`<span>En attente des résultats</span>`;
-      return `<div class="pv" data-c="${esc(c)}"><b>${n}</b> <span>${esc(tag)}</span><br>${live}</div>`}).join("");
-    return `<details class="tier" data-k="${t.k}"${openT.has(t.k)?" open":""}><summary><b>${t.k}</b> <span>${t.items.length} · ${t.d}</span></summary><div class="chips">${chips||"<span>Aucune</span>"}</div>${rows}</details>`}).join("");
-  document.querySelectorAll(".tier").forEach(d=>d.ontoggle=()=>d.open?openT.add(d.dataset.k):openT.delete(d.dataset.k));
+  // barre de couleurs (sièges par parti, du plus sûr au plus ouvert) + une ligne cliquable par niveau
+  const TKEYS=Object.keys(IDX);TD={};
+  tiers.forEach((t,n)=>TD[TKEYS[n]]={t,n,items:t.items});
+  const tcol=p=>PARTIES[p]?.c||"#8a93a0";
+  const gcol=ps=>{const a=ps.split("/").map(tcol);return a.length>1?`repeating-linear-gradient(135deg,${a[0]} 0 3px,${a[1]} 3px 6px)`:a[0]};
+  const classified=new Set(all.map(x=>x.c)),byParty={};
+  tiers.forEach((t,n)=>{if(n===0)return;t.items.forEach(x=>{const p=x.q?x.q[1]:x.i.lead.p;(byParty[p]=byParty[p]||[]).push({c:x.c,n})})});
+  ROUTE=[];
+  Object.keys(byParty).sort((a,b)=>byParty[b].length-byParty[a].length).forEach(p=>byParty[p].sort((a,b)=>b.n-a.n).forEach(x=>ROUTE.push({c:x.c,p,n:x.n})));
+  tiers[0].items.forEach(x=>ROUTE.push({c:x.c,p:x.q?x.q[1]:x.i.lead.p,n:0}));
+  Object.keys(paths).filter(c=>!classified.has(c)).forEach(c=>ROUTE.push({c,p:null,n:-1}));
+  $("route").innerHTML=`<div class="rbar">${ROUTE.map(r=>`<i style="background:${r.p?(r.n===0?gcol(r.p):tcol(r.p)):"var(--none)"}${r.n>0?`;opacity:${[0,.6,.8,1][r.n]}`:""}"></i>`).join("")}<u style="left:${MAJ/TOTAL*100}%"></u></div><div class="rml">Majorité : ${MAJ} sièges sur ${TOTAL}</div>`;
+  $("tiers").innerHTML=tiers.filter(t=>!Q||!SEL.size||SEL.has(TKEYS[tiers.indexOf(t)])).map(t=>{
+    const n=tiers.indexOf(t),cnt={};
+    t.items.forEach(({i,q})=>{ // pivots: on compte les partis en lice (au lieu de chaque combinaison)
+      const ps=(Q&&n===0&&q)?q[1].split("/"):[q?q[1]:i.lead.p];ps.forEach(kk=>cnt[kk]=(cnt[kk]||0)+1)});
+    const ks=Object.entries(cnt).sort((a,b)=>b[1]-a[1]),tot=ks.reduce((a,e)=>a+e[1],0)||1;
+    const stack=ks.map(([kk,v])=>`<i title="${kk} ${v}" style="width:${v/tot*100}%;background:${gcol(kk)}"></i>`).join("");
+    const chips=ks.map(([kk,v])=>`<em>${kk.split("/").map(dot).join("")}${kk} ${v}</em>`).join("");
+    return `<div class="rg" data-k="${TKEYS[n]}"><div class="rn"><b>${t.k}</b><span>${t.items.length} · ${t.d}${Q&&n===0?" · partis en lice":""}</span></div><div class="stack">${stack}</div><div class="rc"><span>${chips||"Aucune"}</span></div></div>`}).join("");
+  $("tiers").querySelectorAll(".rg").forEach(d=>d.onclick=()=>openTier(d.dataset.k));
+  if($("ndlg").open)renderNdlg();
 }
 function showTip(e,code,name){
   const i=info(code);let h=`<b>${esc(results[code]?.nom||name)}</b>`;
@@ -865,12 +886,41 @@ const mqM=matchMedia("(max-width:800px)");
 function placeTools(){const t=$("tools"),f=$("foot"),h=document.querySelector("header");
   if(mqM.matches){if(t.parentNode!==f)f.appendChild(t)}else if(t.parentNode!==h)h.appendChild(t)}
 mqM.addEventListener("change",placeTools);placeTools();
+// -- Niveaux de course: la liste d'un niveau et le détail d'une course s'ouvrent en superposition
+let ROUTE=[],TD={},OPENT=null,OPENC=null;
+const lblG=(t,p)=>t==="pivot"?"Pivot "+p:p+" "+t;
+function rowHTML(x){
+  const {c,i,q,k}=x,tag=q?`${lblG(q[0],q[1])} · ${k.p>=99.5?k.p.toFixed(1):Math.round(k.p)} %`:(i.won?"terminé":"en cours");
+  const live=i?`${dotH(i.lead.p)}${esc(i.lead.p)} ${i.lead.v.toLocaleString("fr-CA")}${i.second?` · ${dotH(i.second.p)}${esc(i.second.p)} ${i.second.v.toLocaleString("fr-CA")}`:""} <span>· écart ${(i.lead.v-(i.second?i.second.v:0)).toLocaleString("fr-CA")} (${i.gap.toFixed(1)} pt)${i.won?" · terminé":" · "+Math.round(i.r.pct)+" % dépouillé"}</span>`:`<span>En attente des résultats</span>`;
+  return `<div class="pv" data-c="${esc(c)}"><b>${esc(results[c]?.nom||names[c]||c)}</b> <span>${esc(tag)}</span><br>${live}</div>`;
+}
+function raceHTML(c){
+  const r=results[c],i=info(c),k=CLS[c];if(!r)return `<div class="sub">En attente des résultats</div>`;
+  const cs=topCands(c,4),all=r.cands.reduce((a,x)=>a+x.v,0);
+  const probs=k&&k.probs?Object.entries(k.probs).filter(e=>e[1]>=1).sort((a,b)=>b[1]-a[1]).map(([p,v])=>`<div class="pb"><span>${dotH(p)}${p}</span><div class="bar"><i style="width:${v}%;background:${PARTIES[p]?.c||"#8a93a0"}"></i></div><b>${Math.round(v)} %</b></div>`).join(""):"";
+  return `<div class="sub">${k?lblG(k.tier,k.parties):"Pas encore classée"} · ${i?(i.won?"terminé":Math.round(r.pct)+" % dépouillé"):"sans résultat"}${i?` · écart ${i.gap.toFixed(1)} pt`:""}</div>`
+   +(probs?`<div class="sub" style="margin-top:10px">Probabilité de victoire</div>${probs}`:"")
+   +`<ul class="cl">${cs.map(x=>`<li style="--c:${PARTIES[x.p]?.c||"#8a93a0"}">${avatar(x)}<div><b>${esc(x.n)}</b><small>${x.p==="AUTRE"?esc(x.a||"Autre"):esc(x.p)}${isSort(c,x)?`<span class="bd">député-e sortant-e</span>`:""}</small></div><span class="v">${all?x.v.toLocaleString("fr-CA")+" · "+pc100(x.v/all*100):"—"}</span></li>`).join("")}</ul>`
+   +`<button id="ngo" data-c="${esc(c)}">Ouvrir dans le panneau</button>`;
+}
+const nd=$("ndlg");
+function renderNdlg(){
+  if(OPENC){$("ndt").textContent=names[OPENC]||"";$("ndb").innerHTML=raceHTML(OPENC)}
+  else if(OPENT&&TD[OPENT]){const d=TD[OPENT];$("ndt").textContent=`${d.t.k} (${d.items.length})`;
+    $("ndb").innerHTML=`<div class="sub">${d.t.d}${view==="live"?" · classement selon la probabilité de victoire":""}</div>`+(d.items.length?d.items.map(rowHTML).join(""):`<div class="sub">Aucune circonscription pour l'instant.</div>`)}
+  $("ndb").querySelectorAll("[data-c]").forEach(d=>d.onclick=()=>{nd.close();selectRiding(d.dataset.c,true)});
+}
+function openTier(k){OPENT=k;OPENC=null;renderNdlg();nd.showModal()}
+function openRace(c){OPENC=c;OPENT=null;renderNdlg();nd.showModal()}
+$("ndx").onclick=()=>nd.close();nd.addEventListener("click",e=>{if(e.target===nd)nd.close()});
+$("route").addEventListener("click",e=>{const bar=$("route").querySelector(".rbar");if(!bar||!ROUTE.length)return;
+  const r=bar.getBoundingClientRect(),i=Math.max(0,Math.min(ROUTE.length-1,Math.floor((e.clientX-r.left)/r.width*ROUTE.length)));openRace(ROUTE[i].c)});
 // -- Aide (ⓘ): les textes longs s'affichent en superposition
 const ST={maj:64,total:127,known:0,n:127};
 const HELP={
  seats:["Sièges",()=>`Sièges = circonscriptions gagnées + en avance. Majorité : ${ST.maj} sièges sur ${ST.total}. Les cases montrent le total par parti et, dessous, l'écart avec les sièges de 2022. La barre montre le total (teinte pleine = gagnées, pâle = en avance) et le trait pointillé marque la majorité.`],
  chg:["Changements en direct",()=>`Comparaison avec le vainqueur de 2022, par nom de circonscription (${ST.known} sur ${ST.n} sont comparables, car les limites ont changé en 2026).`],
- niv:["Niveaux de course",()=>view==="live"?`À mesure que les votes entrent, la page simule 2 000 fins de dépouillement pour chaque circonscription et estime la probabilité de victoire du parti en tête. Solide : plus de 99,5 %. Probable : 90 à 99,5 %. Enclin : 70 à 90 %. Pivot : moins de 70 %. Une circonscription n'est classée qu'à partir de 5 % de bureaux dépouillés. Les boutons filtrent la liste et la carte.`:`Classement selon l'écart entre les deux premiers : pivot sous 5 points, enclin de 5 à 10, probable de 10 à 20, solide à 20 et plus.`],
+ niv:["Niveaux de course",()=>(view==="live"?`À mesure que les votes entrent, la page simule 2 000 fins de dépouillement par circonscription et estime la probabilité de victoire du parti en tête. Solide : plus de 99,5 %. Probable : 90 à 99,5 %. Enclin : 70 à 90 %. Pivot : moins de 70 %. Une circonscription n'est classée qu'à partir de 5 % de bureaux dépouillés.`:`Classement selon l'écart entre les deux premiers : pivot sous 5 points, enclin de 5 à 10, probable de 10 à 20, solide à 20 et plus.`)+` La barre regroupe les circonscriptions par parti, des plus sûres aux plus ouvertes (couleur pleine = solide, plus pâle = probable puis enclin, hachurée = pivot, grise = en attente). Le trait blanc marque la majorité. Cliquez la barre pour voir une course, ou un niveau pour voir sa liste.`],
  watch:["Circonscriptions à surveiller",()=>`Choisissez un parti pour suivre ses circonscriptions clés. Par défaut : celles où il était 1er ou 2e en 2022 avec moins de 10 points d'écart. « Modifier » personnalise la liste. Contour lumineux, Assombrir le reste et Mosaïque s'affichent sur la carte (ordinateur).`],
  reg:["Régions",()=>`Participation estimée = votes exercés ÷ électeurs inscrits des bureaux dépouillés. Les barres montrent la part des votes par parti. Cliquez une région pour zoomer la carte (ordinateur).`]
 };
